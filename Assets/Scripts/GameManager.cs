@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -17,19 +18,20 @@ public class GameManager : MonoBehaviour
     private Material originalMaterial;
     private int emptyLocation;
     private bool isShuffling = false;
+    public GameObject puzzleDisplay;
     [DllImport("__Internal")]
     
     private static extern void UploadFile();
 
     private void Start()
     {
-        //importButton.onClick.AddListener(OnImportButtonClick);
+        importButton.onClick.AddListener(OnImportButtonClick);
 
         startButton.onClick.AddListener(StartPuzzle);
         startButton.interactable = false;
 
         defaultImageButton.onClick.AddListener(OnDefaultImageButtonClick); // Ajout de l'écouteur d'événements
-        //puzzleDisplay.SetActive(false);
+        puzzleDisplay.SetActive(false);
     }
 
     public void StartPuzzle()
@@ -39,6 +41,10 @@ public class GameManager : MonoBehaviour
         pieces = new List<Transform>();
         size = 4;
         CreateGamePieces(0.01f);
+
+        puzzleDisplay.SetActive(true);
+        RawImage displayImage = puzzleDisplay.GetComponent<RawImage>();
+        displayImage.texture = originalMaterial.mainTexture;
 
     }
 
@@ -116,6 +122,41 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Image par défaut introuvable !");
         }
     }
+    private void OnImportButtonClick()
+    {
+        UploadFile();  // Appel au JavaScript pour ouvrir le sélecteur de fichiers
+    }
+    public void OnFileUploaded(string imageData)
+    {
+        try
+        {
+            byte[] imageBytes = System.Convert.FromBase64String(imageData);
+            Texture2D ImportImage = new Texture2D(2, 2);
+            ImportImage.LoadImage(imageBytes);
+            originalMaterial = CreateMaterial(ImportImage);
+            if (originalImage != null)
+            {
+                MeshRenderer meshRenderer = originalImage.gameObject.GetComponent<MeshRenderer>();
+                if (meshRenderer != null)
+                {
+                    meshRenderer.material = originalMaterial;
+                    startButton.interactable = true;
+                }
+                else
+                {
+                    Debug.LogError("MeshRenderer introuvable sur l'objet originalImage !");
+                }
+            }
+            else
+            {
+                Debug.LogError("originalImage n'est pas assigné !");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Erreur lors du téléchargement du fichier : " + ex.Message);
+        }
+    }
     private bool CheckCompletion()
     {
         if (pieces != null)
@@ -150,6 +191,10 @@ public class GameManager : MonoBehaviour
     private Material CreateMaterial(Texture2D texture)
     {
         Material material = new Material(Shader.Find("Unlit/Texture"));
+        if (material == null)
+        {
+            Debug.LogError("Shader 'Unlit/Texture' not found. Make sure it is included in the build.");
+        }
         material.mainTexture = texture;
         return material;
     }
@@ -206,7 +251,7 @@ public class GameManager : MonoBehaviour
         while (count < (size * size * size))
         {
             // Pick a random location.
-            int rnd = Random.Range(0, size * size);
+            int rnd = UnityEngine.Random.Range(0, size * size);
             // Only thing we forbid is undoing the last move.
             if (rnd == last) { continue; }
             last = rnd;
@@ -246,4 +291,6 @@ public class GameManager : MonoBehaviour
         // Update empty location.
         emptyLocation = index;
     }
+
+
 }
