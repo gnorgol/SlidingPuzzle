@@ -239,7 +239,7 @@ Transform:
   m_GameObject: {fileID: 569137344}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 5, y: 0, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -357,6 +357,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4eee38d61fe984296408e707c7745b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameTransform: {fileID: 569137345}
+  importButton: {fileID: 6974559900258165610}
+  startButton: {fileID: 6542158241336913592}
+  defaultImageButton: {fileID: 3754430355573392841}
+  originalImage: {fileID: 8821388376490077025, guid: 116b745cae58baf41af1ff06cfee1957, type: 3}
 --- !u!224 &90523642970515816
 RectTransform:
   m_ObjectHideFlags: 0
@@ -567,7 +572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
